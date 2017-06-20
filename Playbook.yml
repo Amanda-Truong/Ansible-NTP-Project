@@ -1,0 +1,24 @@
+---
+
+  - hosts: all
+    tasks:
+      - name: install ntp
+        become: true    # allows passage
+        package:
+            name: ntp
+            state: latest
+
+      - name: write a ntp config file
+        template:
+            src: ./ntp.j2
+            dest: /home/vagrant/ntp.conf
+            # ^ Location of the Vagrant ntp.conf file
+        notify:
+          restart ntpd
+
+    handlers:
+      - name: restart ntpd
+        become: true 
+        service:
+            name: ntp
+            state: restarted
